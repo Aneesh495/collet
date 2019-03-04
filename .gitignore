@@ -1,0 +1,10 @@
+*.beam
+*.ez
+/build
+erl_crash.dump
+__pycache__/
+*.pyc
+.DS_Store
+*.o
+*.so
+*.dylib
