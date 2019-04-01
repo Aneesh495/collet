@@ -88,7 +88,7 @@ pub fn evaluate_second_derivative(b: BezierCubic, t: Float) -> Point2D {
 
   // a1 = 6 * (P3 - 2*P2 + P1)
   let a1_x = 6.0 *. { b.p3.x -. 2.0 *. b.p2.x +. b.p1.x }
-  let a1_y = 6.0 *. { b.p3.y -. 2.0 *. b.p2.x +. b.p1.y }
+  let a1_y = 6.0 *. { b.p3.y -. 2.0 *. b.p2.y +. b.p1.y }
 
   Point2D(
     x: one_minus_t *. a0_x +. clamped_t *. a1_x,
