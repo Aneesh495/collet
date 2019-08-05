@@ -55,7 +55,10 @@ pub fn resolve(
           let buffer_candidate =
             list.find(neighbors, fn(pair) {
               let #(node_obj, _) = pair
-              node.allows_parking(node_obj)
+              case node_obj.node_type {
+                node.ParkBuffer(_) -> True
+                _ -> False
+              }
             })
 
           case buffer_candidate {
