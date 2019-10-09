@@ -7,8 +7,28 @@ import collet/protocol/vda5050/connection.{
 import collet/protocol/vda5050/order.{
   type Order, type OrderEdge, type OrderNode,
 }
+import gleam/dynamic/decode
 import gleam/json
 import gleam/list
+
+// Summary record extracted from an ingested VDA 5050 Order message.
+pub type OrderSummary {
+  OrderSummary(order_id: String, order_update_id: Int)
+}
+
+// Parses and validates a VDA 5050 Order JSON document.
+pub fn decode_order_summary(json_string: String) -> Result(OrderSummary, String) {
+  let decoder = {
+    use order_id <- decode.field("orderId", decode.string)
+    use update_id <- decode.field("orderUpdateId", decode.int)
+    decode.success(OrderSummary(order_id: order_id, order_update_id: update_id))
+  }
+
+  case json.parse(json_string, decoder) {
+    Ok(summary) -> Ok(summary)
+    Error(_) -> Error("Malformed VDA 5050 order: missing orderId or orderUpdateId")
+  }
+}
 
 // Encodes a full VDA 5050 Order message into a valid JSON string.
 pub fn encode_order(o: Order) -> String {
