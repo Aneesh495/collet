@@ -118,7 +118,11 @@ pub fn is_approximately_equal(a: Point2D, b: Point2D, epsilon: Float) -> Bool {
 }
 
 // Computes the shortest distance from a query point p to a line segment bounded by [seg_start, seg_end].
-pub fn distance_to_segment(p: Point2D, seg_start: Point2D, seg_end: Point2D) -> Float {
+pub fn distance_to_segment(
+  p: Point2D,
+  seg_start: Point2D,
+  seg_end: Point2D,
+) -> Float {
   let seg_vec = sub(seg_end, seg_start)
   let seg_len_sq = squared_norm(seg_vec)
   case seg_len_sq <. 0.000000001 {

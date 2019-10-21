@@ -7,11 +7,7 @@ import gleam/list
 // Hardware operational status of an automated charging station.
 pub type DockStatus {
   DockAvailable
-  DockOccupied(
-    vehicle_id: VehicleId,
-    docked_at_sec: Float,
-    target_soc: Float,
-  )
+  DockOccupied(vehicle_id: VehicleId, docked_at_sec: Float, target_soc: Float)
   DockFaulted(reason: String)
 }
 
@@ -84,8 +80,7 @@ pub fn dock(
 // Undocks the current robot upon completing charge cycle or preemption.
 pub fn undock(dock_station: ChargingDock) -> Result(ChargingDock, String) {
   case dock_station.status {
-    DockOccupied(..) ->
-      Ok(ChargingDock(..dock_station, status: DockAvailable))
+    DockOccupied(..) -> Ok(ChargingDock(..dock_station, status: DockAvailable))
     _ ->
       Error(
         "Dock "
@@ -125,7 +120,7 @@ pub fn estimate_charge_time_sec(
       let energy_needed_kwh = total_energy_kwh *. delta_soc
 
       // 90% average charging efficiency
-      let charging_efficiency = 0.90
+      let charging_efficiency = 0.9
       let hours_needed =
         energy_needed_kwh /. { dock_power_kw *. charging_efficiency }
       hours_needed *. 3600.0

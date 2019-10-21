@@ -14,12 +14,14 @@ pub fn node_types_and_predicates_test() {
   assert node.allows_parking(p_transit)
   assert !node.allows_charging(p_transit)
 
-  let p_pickup = node.new_pickup("N2", Point2D(5.0, 0.0), "STN_A", "PALLET_EUR", 0.0)
+  let p_pickup =
+    node.new_pickup("N2", Point2D(5.0, 0.0), "STN_A", "PALLET_EUR", 0.0)
   assert !node.allows_parking(p_pickup)
   assert node.is_heading_allowed(p_pickup, 0.05, 0.1)
   assert !node.is_heading_allowed(p_pickup, 1.5, 0.1)
 
-  let p_charger = node.new_charger("N3", Point2D(10.0, 0.0), "CHG_1", 22.0, "INDUCTION", 0.0)
+  let p_charger =
+    node.new_charger("N3", Point2D(10.0, 0.0), "CHG_1", 22.0, "INDUCTION", 0.0)
   assert node.allows_charging(p_charger)
   assert node.distance(p_transit, p_charger) == 10.0
 }
@@ -115,14 +117,14 @@ pub fn operational_zones_test() {
     zone.effective_speed_limit([zone_speed], Point2D(5.0, 5.0), 2.5)
   assert eff_speed == 0.8
 
-  let zone_keepout =
-    zone.new_keep_out("Z_HAZARD", "Battery Pit", poly_boundary)
+  let zone_keepout = zone.new_keep_out("Z_HAZARD", "Battery Pit", poly_boundary)
   assert zone.is_point_in_keep_out([zone_keepout], Point2D(5.0, 5.0))
   assert !zone.is_point_in_keep_out([zone_keepout], Point2D(15.0, 5.0))
 }
 
 pub fn grid_warehouse_generator_and_json_test() {
-  let grid = parser.create_grid_warehouse("GRID_3x3", "Aisle Test 3x3", 3, 3, 2.5)
+  let grid =
+    parser.create_grid_warehouse("GRID_3x3", "Aisle Test 3x3", 3, 3, 2.5)
   // 3x3 = 9 nodes
   assert dict.size(grid.nodes) == 9
   // Horizontal edges: 3 rows * 2 columns * 2 directions = 12

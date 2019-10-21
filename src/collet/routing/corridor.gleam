@@ -32,8 +32,7 @@ pub fn synthesize_corridor(
   wmap: WarehouseMap,
   default_half_width_meters: Float,
 ) -> NavigationCorridor {
-  let segments =
-    build_corridor_segments(route, wmap, default_half_width_meters)
+  let segments = build_corridor_segments(route, wmap, default_half_width_meters)
   let total_len =
     list.fold(segments, 0.0, fn(acc, s) {
       acc +. point.distance(s.start_point, s.end_point)
@@ -103,10 +102,7 @@ fn build_corridor_segments(
                   time_window: time_win,
                   half_width_meters: seg_half_w,
                 )
-              [
-                corridor_seg,
-                ..build_corridor_segments(rest, wmap, half_width)
-              ]
+              [corridor_seg, ..build_corridor_segments(rest, wmap, half_width)]
             }
             _, _ -> build_corridor_segments(rest, wmap, half_width)
           }

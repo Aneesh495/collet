@@ -153,9 +153,19 @@ pub fn validate(map: WarehouseMap) -> List(String) {
         True, True ->
           Ok("Edge " <> e.id <> " references non-existent start and end nodes")
         True, False ->
-          Ok("Edge " <> e.id <> " references non-existent start node " <> e.start_node_id)
+          Ok(
+            "Edge "
+            <> e.id
+            <> " references non-existent start node "
+            <> e.start_node_id,
+          )
         False, True ->
-          Ok("Edge " <> e.id <> " references non-existent end node " <> e.end_node_id)
+          Ok(
+            "Edge "
+            <> e.id
+            <> " references non-existent end node "
+            <> e.end_node_id,
+          )
         False, False -> Error(Nil)
       }
     })

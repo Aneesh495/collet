@@ -51,8 +51,7 @@ pub fn trajectory_generation_and_sampling_test() {
   let start_pt = Point2D(0.0, 0.0)
   let end_pt = Point2D(10.0, 0.0)
 
-  let traj =
-    trajectory.generate_linear(start_pt, end_pt, 0.0, 0.0, amr, 0.0)
+  let traj = trajectory.generate_linear(start_pt, end_pt, 0.0, 0.0, amr, 0.0)
   assert traj.total_length_meters == 10.0
   assert list.length(traj.knots) == 20
 
@@ -93,7 +92,8 @@ pub fn odometry_dead_reckoning_and_slip_test() {
   // 2. Pure rotation in place: 90 deg/s for 1.0s
   let rot_twist = Twist2D(0.0, 0.0, 1.570796)
   let state_rot = odometry.propagate_twist(state_fwd, rot_twist, 1.0)
-  assert state_rot.pose.heading_rad >=. 1.57 && state_rot.pose.heading_rad <=. 1.58
+  assert state_rot.pose.heading_rad >=. 1.57
+    && state_rot.pose.heading_rad <=. 1.58
   assert point.is_approximately_equal(
     state_rot.pose.position,
     Point2D(2.0, 0.0),
@@ -103,15 +103,10 @@ pub fn odometry_dead_reckoning_and_slip_test() {
   // 3. Differential wheel ticks: equal ticks moves forward
   let ticks_fwd = WheelTicks(left_ticks: 1000, right_ticks: 1000, dt_sec: 1.0)
   let state_ticks =
-    odometry.propagate_differential_ticks(
-      init_state,
-      ticks_fwd,
-      0.1,
-      0.6,
-      1000,
-    )
+    odometry.propagate_differential_ticks(init_state, ticks_fwd, 0.1, 0.6, 1000)
   // Distance = 2 * pi * 0.1 = 0.6283m
-  assert state_ticks.pose.position.x >=. 0.62 && state_ticks.pose.position.x <=. 0.63
+  assert state_ticks.pose.position.x >=. 0.62
+    && state_ticks.pose.position.x <=. 0.63
 
   // 4. Wheel slip detection
   let cmd = Twist2D(1.5, 0.0, 0.0)

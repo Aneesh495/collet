@@ -96,33 +96,19 @@ fn find_knot_collision(
     [knot_a, ..rest] -> {
       case trajectory.evaluate_at_time(traj_b, knot_a.time_sec) {
         Error(Nil) ->
-          find_knot_collision(
-            rest,
-            agent_a,
-            traj_b,
-            agent_b,
-            safety_dist,
-          )
+          find_knot_collision(rest, agent_a, traj_b, agent_b, safety_dist)
         Ok(knot_b) -> {
           let dist = point.distance(knot_a.position, knot_b.position)
           case dist <. safety_dist {
             True ->
-              Ok(
-                FootprintConflict(
-                  agent_a: agent_a,
-                  agent_b: agent_b,
-                  time_sec: knot_a.time_sec,
-                  separation_meters: dist,
-                ),
-              )
+              Ok(FootprintConflict(
+                agent_a: agent_a,
+                agent_b: agent_b,
+                time_sec: knot_a.time_sec,
+                separation_meters: dist,
+              ))
             False ->
-              find_knot_collision(
-                rest,
-                agent_a,
-                traj_b,
-                agent_b,
-                safety_dist,
-              )
+              find_knot_collision(rest, agent_a, traj_b, agent_b, safety_dist)
           }
         }
       }

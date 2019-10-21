@@ -63,10 +63,7 @@ pub fn new_pickup(
     id: id,
     position: position,
     elevation: 0.0,
-    node_type: PickupStation(
-      station_id: station_id,
-      payload_type: payload_type,
-    ),
+    node_type: PickupStation(station_id: station_id, payload_type: payload_type),
     allowed_headings: [orientation.normalize(required_heading)],
     clearance_radius: 1.2,
     max_wait_duration_sec: 300.0,
@@ -138,7 +135,11 @@ pub fn distance(a: Node, b: Node) -> Float {
 }
 
 // Checks if a candidate heading is permitted at the node within an angular tolerance.
-pub fn is_heading_allowed(node: Node, heading: Float, tolerance: Float) -> Bool {
+pub fn is_heading_allowed(
+  node: Node,
+  heading: Float,
+  tolerance: Float,
+) -> Bool {
   case node.allowed_headings {
     // Empty list allows all orientations
     [] -> True

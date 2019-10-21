@@ -22,8 +22,7 @@ pub fn render_prometheus_metrics(
     "",
     "# HELP collet_fleet_pending_tasks Unassigned pending transport tasks in dispatcher queue",
     "# TYPE collet_fleet_pending_tasks gauge",
-    "collet_fleet_pending_tasks "
-      <> int.to_string(snapshot.pending_tasks_count),
+    "collet_fleet_pending_tasks " <> int.to_string(snapshot.pending_tasks_count),
     "",
     "# HELP collet_fleet_utilization_ratio Active vehicle allocation ratio across the fleet",
     "# TYPE collet_fleet_utilization_ratio gauge",
@@ -56,9 +55,9 @@ pub fn render_prometheus_metrics(
     list.flat_map(snapshot.telemetries, fn(t) {
       [
         "collet_robot_battery_soc{vehicle_id=\""
-          <> t.vehicle_id
-          <> "\"} "
-          <> float.to_string(t.battery_soc),
+        <> t.vehicle_id
+        <> "\"} "
+        <> float.to_string(t.battery_soc),
       ]
     })
 

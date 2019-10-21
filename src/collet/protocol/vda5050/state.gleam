@@ -37,10 +37,7 @@ pub type ProtocolError {
 
 // Safety hardware sub-system state report.
 pub type SafetyState {
-  SafetyState(
-    e_stop: EStopState,
-    field_violation: Bool,
-  )
+  SafetyState(e_stop: EStopState, field_violation: Bool)
 }
 
 // Real-time battery state of charge telemetry.
@@ -67,11 +64,7 @@ pub type AgvPosition {
 
 // Instantaneous velocity vector in local coordinate frame.
 pub type Velocity {
-  Velocity(
-    vx_mps: Float,
-    vy_mps: Float,
-    omega_radps: Float,
-  )
+  Velocity(vx_mps: Float, vy_mps: Float, omega_radps: Float)
 }
 
 // Complete VDA 5050 periodic state telemetry report broadcast by AMR.

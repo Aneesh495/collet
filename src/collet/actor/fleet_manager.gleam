@@ -76,9 +76,7 @@ fn handle_message(
     RegisterRobot(vid, session, client) -> {
       let updated_sessions = dict.insert(state.robot_sessions, vid, session)
       process.send(client, Nil)
-      actor.continue(
-        ManagerState(..state, robot_sessions: updated_sessions),
-      )
+      actor.continue(ManagerState(..state, robot_sessions: updated_sessions))
     }
 
     UnregisterRobot(vid, client) -> {
@@ -104,9 +102,7 @@ fn handle_message(
     UpdateRobotTelemetry(telem) -> {
       let updated_telems =
         dict.insert(state.robot_telemetries, telem.vehicle_id, telem)
-      actor.continue(
-        ManagerState(..state, robot_telemetries: updated_telems),
-      )
+      actor.continue(ManagerState(..state, robot_telemetries: updated_telems))
     }
 
     TickDispatch(client) -> {

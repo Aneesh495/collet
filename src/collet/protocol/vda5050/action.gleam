@@ -38,10 +38,7 @@ pub type InstantAction {
 
 // InstantActions protocol payload containing a header and a list of urgent actions.
 pub type InstantActionsMessage {
-  InstantActionsMessage(
-    header: Header,
-    actions: List(InstantAction),
-  )
+  InstantActionsMessage(header: Header, actions: List(InstantAction))
 }
 
 // Execution state tracking the progress of an active action reported in AMR state telemetry.

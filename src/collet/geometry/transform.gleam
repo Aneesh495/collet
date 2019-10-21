@@ -48,10 +48,7 @@ pub fn inverse(t: Transform2D) -> Transform2D {
 pub fn apply_to_point(t: Transform2D, p: Point2D) -> Point2D {
   let c = math_ffi.cos(t.theta)
   let s = math_ffi.sin(t.theta)
-  Point2D(
-    x: t.x +. c *. p.x -. s *. p.y,
-    y: t.y +. s *. p.x +. c *. p.y,
-  )
+  Point2D(x: t.x +. c *. p.x -. s *. p.y, y: t.y +. s *. p.x +. c *. p.y)
 }
 
 // Maps a directional vector in local body coordinates to world coordinates.
@@ -59,10 +56,7 @@ pub fn apply_to_point(t: Transform2D, p: Point2D) -> Point2D {
 pub fn apply_to_vector(t: Transform2D, v: Point2D) -> Point2D {
   let c = math_ffi.cos(t.theta)
   let s = math_ffi.sin(t.theta)
-  Point2D(
-    x: c *. v.x -. s *. v.y,
-    y: s *. v.x +. c *. v.y,
-  )
+  Point2D(x: c *. v.x -. s *. v.y, y: s *. v.x +. c *. v.y)
 }
 
 // Maps a point in world coordinates back into local body coordinates.
@@ -74,13 +68,20 @@ pub fn world_to_local(t: Transform2D, world_pt: Point2D) -> Point2D {
 
 // Computes the relative SE(2) transformation from pose 'source' to pose 'target'.
 // Relative = inverse(source) * target.
-pub fn relative_transform(source: Transform2D, target: Transform2D) -> Transform2D {
+pub fn relative_transform(
+  source: Transform2D,
+  target: Transform2D,
+) -> Transform2D {
   compose(inverse(source), target)
 }
 
 // Geodesic interpolation along the SE(2) manifold between transform a and transform b.
 // The interpolation parameter alpha is clamped to [0.0, 1.0].
-pub fn interpolate(a: Transform2D, b: Transform2D, alpha: Float) -> Transform2D {
+pub fn interpolate(
+  a: Transform2D,
+  b: Transform2D,
+  alpha: Float,
+) -> Transform2D {
   let clamped_alpha = math_ffi.clamp_float(alpha, 0.0, 1.0)
   let rel = relative_transform(a, b)
   let interp_x = a.x +. { b.x -. a.x } *. clamped_alpha

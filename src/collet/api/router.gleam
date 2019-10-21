@@ -51,8 +51,7 @@ fn handle_metrics(
   snapshot: FleetStatusSnapshot,
   sim_metrics: SimMetrics,
 ) -> Response(String) {
-  let prometheus_text =
-    metrics.render_prometheus_metrics(snapshot, sim_metrics)
+  let prometheus_text = metrics.render_prometheus_metrics(snapshot, sim_metrics)
 
   response.new(200)
   |> response.set_header(
@@ -87,13 +86,10 @@ fn handle_fleet_telemetry(snapshot: FleetStatusSnapshot) -> Response(String) {
         #("current_node_id", json.string(t.current_node_id)),
         #("battery_soc", json.float(t.battery_soc)),
         #("is_e_stopped", json.bool(t.is_e_stopped)),
-        #(
-          "active_order_id",
-          case t.active_order_id {
-            Some(oid) -> json.string(oid)
-            None -> json.null()
-          },
-        ),
+        #("active_order_id", case t.active_order_id {
+          Some(oid) -> json.string(oid)
+          None -> json.null()
+        }),
         #(
           "pose",
           json.object([

@@ -31,10 +31,7 @@ pub fn new() -> Dispatcher {
 
 // Enqueues a new pending mission task for auction allocation.
 pub fn submit_task(disp: Dispatcher, task: MissionTask) -> Dispatcher {
-  Dispatcher(
-    ..disp,
-    pending_tasks: list.append(disp.pending_tasks, [task]),
-  )
+  Dispatcher(..disp, pending_tasks: list.append(disp.pending_tasks, [task]))
 }
 
 // Dispatches pending tasks to available AMRs using market auctioning.
@@ -50,62 +47,58 @@ pub fn dispatch_pending(
     tasks -> {
       let auction_results = auction.auction_batch(tasks, bidders, wmap)
 
-      list.fold(
-        auction_results,
-        #(disp, []),
-        fn(acc, pair) {
-          let #(curr_disp, assigned_acc) = acc
-          let #(t, bid_res) = pair
+      list.fold(auction_results, #(disp, []), fn(acc, pair) {
+        let #(curr_disp, assigned_acc) = acc
+        let #(t, bid_res) = pair
 
-          case bid_res {
-            Ok(bid) -> {
-              let tid = task.id(t)
-              case task.assign(t, bid.vehicle_id, now_sec) {
-                Ok(assigned_task) -> {
-                  // Remove from pending_tasks
-                  let remaining_pending =
-                    list.filter(curr_disp.pending_tasks, fn(item) {
-                      task.id(item) != tid
-                    })
+        case bid_res {
+          Ok(bid) -> {
+            let tid = task.id(t)
+            case task.assign(t, bid.vehicle_id, now_sec) {
+              Ok(assigned_task) -> {
+                // Remove from pending_tasks
+                let remaining_pending =
+                  list.filter(curr_disp.pending_tasks, fn(item) {
+                    task.id(item) != tid
+                  })
 
-                  // Add to active_missions
-                  let new_active =
-                    dict.insert(curr_disp.active_missions, tid, assigned_task)
+                // Add to active_missions
+                let new_active =
+                  dict.insert(curr_disp.active_missions, tid, assigned_task)
 
-                  // Append to robot task queue
-                  let curr_robot_q = case
-                    dict.get(curr_disp.robot_queues, bid.vehicle_id)
-                  {
-                    Ok(q) -> q
-                    Error(Nil) -> []
-                  }
-                  let new_robot_queues =
-                    dict.insert(
-                      curr_disp.robot_queues,
-                      bid.vehicle_id,
-                      list.append(curr_robot_q, [tid]),
-                    )
-
-                  let updated_disp =
-                    Dispatcher(
-                      pending_tasks: remaining_pending,
-                      active_missions: new_active,
-                      completed_missions: curr_disp.completed_missions,
-                      robot_queues: new_robot_queues,
-                    )
-
-                  #(
-                    updated_disp,
-                    [#(bid.vehicle_id, assigned_task), ..assigned_acc],
-                  )
+                // Append to robot task queue
+                let curr_robot_q = case
+                  dict.get(curr_disp.robot_queues, bid.vehicle_id)
+                {
+                  Ok(q) -> q
+                  Error(Nil) -> []
                 }
-                Error(_) -> acc
+                let new_robot_queues =
+                  dict.insert(
+                    curr_disp.robot_queues,
+                    bid.vehicle_id,
+                    list.append(curr_robot_q, [tid]),
+                  )
+
+                let updated_disp =
+                  Dispatcher(
+                    pending_tasks: remaining_pending,
+                    active_missions: new_active,
+                    completed_missions: curr_disp.completed_missions,
+                    robot_queues: new_robot_queues,
+                  )
+
+                #(updated_disp, [
+                  #(bid.vehicle_id, assigned_task),
+                  ..assigned_acc
+                ])
               }
+              Error(_) -> acc
             }
-            Error(_) -> acc
           }
-        },
-      )
+          Error(_) -> acc
+        }
+      })
     }
   }
 }
@@ -145,14 +138,12 @@ pub fn update_status(
             None -> disp.robot_queues
           }
 
-          Ok(
-            Dispatcher(
-              pending_tasks: disp.pending_tasks,
-              active_missions: updated_active,
-              completed_missions: updated_completed,
-              robot_queues: updated_queues,
-            ),
-          )
+          Ok(Dispatcher(
+            pending_tasks: disp.pending_tasks,
+            active_missions: updated_active,
+            completed_missions: updated_completed,
+            robot_queues: updated_queues,
+          ))
         }
         Assigned(vid, at) -> {
           case task.assign(active_task, vid, at) {
@@ -182,8 +173,7 @@ pub fn update_status(
 
 // Cancels a task whether pending or active.
 pub fn cancel_task(disp: Dispatcher, task_id: String) -> Dispatcher {
-  let in_pending =
-    list.any(disp.pending_tasks, fn(t) { task.id(t) == task_id })
+  let in_pending = list.any(disp.pending_tasks, fn(t) { task.id(t) == task_id })
   case in_pending {
     True -> {
       let filtered =

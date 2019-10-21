@@ -1,6 +1,8 @@
 import collet/protocol/vda5050/action.{InstantActionsMessage}
 import collet/protocol/vda5050/codec
-import collet/protocol/vda5050/connection.{ConnectionBroken, ConnectionMessage, Online}
+import collet/protocol/vda5050/connection.{
+  ConnectionBroken, ConnectionMessage, Online,
+}
 import collet/protocol/vda5050/header
 import collet/protocol/vda5050/order.{Order}
 import collet/protocol/vda5050/state.{Automatic, Manual}
@@ -72,7 +74,8 @@ pub fn instant_actions_encoding_test() {
 
 pub fn connection_and_state_enums_test() {
   assert connection.connection_state_to_string(Online) == "ONLINE"
-  assert connection.connection_state_to_string(ConnectionBroken) == "CONNECTIONBROKEN"
+  assert connection.connection_state_to_string(ConnectionBroken)
+    == "CONNECTIONBROKEN"
   assert connection.string_to_connection_state("ONLINE") == Ok(Online)
 
   assert action.status_to_string(action.Waiting) == "WAITING"

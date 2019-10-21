@@ -89,24 +89,24 @@ fn search_constraint_tree(
             // No conflicts: optimal solution found!
             Error(Nil) -> {
               let makespan = compute_makespan(best_ct.paths)
-              Ok(
-                CbsSolution(
-                  paths: best_ct.paths,
-                  sum_of_costs_sec: best_ct.cost,
-                  makespan_sec: makespan,
-                  tree_nodes_explored: iterations + 1,
-                ),
-              )
+              Ok(CbsSolution(
+                paths: best_ct.paths,
+                sum_of_costs_sec: best_ct.cost,
+                makespan_sec: makespan,
+                tree_nodes_explored: iterations + 1,
+              ))
             }
             // Conflict identified: branch into two child nodes
             Ok(conf) -> {
               let #(agent_a, agent_b) = conflict.conflict_agents(conf)
               let time = conflict.conflict_time(conf)
 
-              let node_a_id = get_agent_node_at_time(best_ct.paths, agent_a, time)
+              let node_a_id =
+                get_agent_node_at_time(best_ct.paths, agent_a, time)
               let constraint_a = AvoidNode(node_id: node_a_id, time_sec: time)
 
-              let node_b_id = get_agent_node_at_time(best_ct.paths, agent_b, time)
+              let node_b_id =
+                get_agent_node_at_time(best_ct.paths, agent_b, time)
               let constraint_b = AvoidNode(node_id: node_b_id, time_sec: time)
 
               // Branch Child A: impose constraint on agent A
@@ -116,7 +116,8 @@ fn search_constraint_tree(
               let child_b_opt =
                 create_child_ct(wmap, tasks, best_ct, agent_b, constraint_b)
 
-              let new_children = list.filter_map([child_a_opt, child_b_opt], fn(opt) { opt })
+              let new_children =
+                list.filter_map([child_a_opt, child_b_opt], fn(opt) { opt })
               let next_open = merge_ct_nodes(rest_tree, new_children)
 
               search_constraint_tree(
@@ -142,13 +143,19 @@ fn create_child_ct(
   replan_agent_id: VehicleId,
   new_constraint: AgentConstraint,
 ) -> Result(ConstraintTreeNode, Nil) {
-  let current_agent_constraints = case dict.get(parent_ct.constraints, replan_agent_id) {
+  let current_agent_constraints = case
+    dict.get(parent_ct.constraints, replan_agent_id)
+  {
     Ok(c_list) -> [new_constraint, ..c_list]
     Error(Nil) -> [new_constraint]
   }
 
   let updated_constraints =
-    dict.insert(parent_ct.constraints, replan_agent_id, current_agent_constraints)
+    dict.insert(
+      parent_ct.constraints,
+      replan_agent_id,
+      current_agent_constraints,
+    )
 
   // Find task for replan_agent
   case list.find(tasks, fn(t) { t.vehicle_id == replan_agent_id }) {
@@ -172,13 +179,11 @@ fn create_child_ct(
           let updated_paths =
             dict.insert(parent_ct.paths, replan_agent_id, new_path)
           let new_cost = compute_sum_of_costs(updated_paths)
-          Ok(
-            ConstraintTreeNode(
-              constraints: updated_constraints,
-              paths: updated_paths,
-              cost: new_cost,
-            ),
-          )
+          Ok(ConstraintTreeNode(
+            constraints: updated_constraints,
+            paths: updated_paths,
+            cost: new_cost,
+          ))
         }
       }
     }
@@ -257,7 +262,8 @@ fn check_agent_pairs(
       let conflict_with_others =
         list.find_map(other_agents, fn(agent_b) {
           case dict.get(paths, agent_a), dict.get(paths, agent_b) {
-            Ok(path_a), Ok(path_b) -> check_route_conflict(agent_a, path_a, agent_b, path_b)
+            Ok(path_a), Ok(path_b) ->
+              check_route_conflict(agent_a, path_a, agent_b, path_b)
             _, _ -> Error(Nil)
           }
         })
@@ -283,21 +289,20 @@ fn check_route_conflict(
       case node_a.node_id == node_b.node_id {
         True -> {
           // Overlap in time window
-          let t_diff =
-            case node_a.arrival_time_sec >=. node_b.arrival_time_sec {
-              True -> node_a.arrival_time_sec -. node_b.arrival_time_sec
-              False -> node_b.arrival_time_sec -. node_a.arrival_time_sec
-            }
+          let t_diff = case
+            node_a.arrival_time_sec >=. node_b.arrival_time_sec
+          {
+            True -> node_a.arrival_time_sec -. node_b.arrival_time_sec
+            False -> node_b.arrival_time_sec -. node_a.arrival_time_sec
+          }
           case t_diff <. 0.8 {
             True ->
-              Ok(
-                VertexConflict(
-                  agent_a: agent_a,
-                  agent_b: agent_b,
-                  node_id: node_a.node_id,
-                  time_sec: node_a.arrival_time_sec,
-                ),
-              )
+              Ok(VertexConflict(
+                agent_a: agent_a,
+                agent_b: agent_b,
+                node_id: node_a.node_id,
+                time_sec: node_a.arrival_time_sec,
+              ))
             False -> Error(Nil)
           }
         }
@@ -318,7 +323,8 @@ fn get_agent_node_at_time(
     Ok(path) -> {
       let candidate =
         list.find(path.route, fn(n) {
-          n.arrival_time_sec <=. time_sec && time_sec <=. n.departure_time_sec +. 1.0
+          n.arrival_time_sec <=. time_sec
+          && time_sec <=. n.departure_time_sec +. 1.0
         })
       case candidate {
         Ok(node_entry) -> node_entry.node_id

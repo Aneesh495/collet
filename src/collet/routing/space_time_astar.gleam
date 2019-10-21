@@ -134,13 +134,11 @@ fn run_sta_star(
       case best.node_id == goal_node_id {
         True -> {
           let route = reconstruct_path(best, [])
-          Ok(
-            PathResult(
-              route: route,
-              total_travel_time_sec: best.g_cost,
-              nodes_expanded: expansions,
-            ),
-          )
+          Ok(PathResult(
+            route: route,
+            total_travel_time_sec: best.g_cost,
+            nodes_expanded: expansions,
+          ))
         }
         False -> {
           case best.time_sec >. horizon_cutoff_sec || expansions > 5000 {
@@ -218,18 +216,14 @@ fn generate_successors(
     list.filter_map(neighbors, fn(neighbor_pair) {
       let #(target_node, edge_obj) = neighbor_pair
       let effective_speed =
-        math_ffi.min_float(
-          edge_obj.max_forward_speed,
-          veh.max_linear_velocity,
-        )
+        math_ffi.min_float(edge_obj.max_forward_speed, veh.max_linear_velocity)
       let travel_time =
         edge_obj.length_meters /. effective_speed *. edge_obj.cost_weight
       let arrival_time = current.time_sec +. travel_time
       let interval = TimeInterval(current.time_sec, arrival_time)
 
       // Check reservation table availability for edge and target node
-      let edge_free =
-        table.is_edge_available(res_table, edge_obj.id, interval)
+      let edge_free = table.is_edge_available(res_table, edge_obj.id, interval)
       let node_free =
         table.is_node_available(
           res_table,
@@ -258,25 +252,18 @@ fn generate_successors(
           }
         })
 
-      case
-        edge_free
-        && node_free
-        && !edge_constrained
-        && !node_constrained
-      {
+      case edge_free && node_free && !edge_constrained && !node_constrained {
         True -> {
           let g = current.g_cost +. travel_time
           let h = heuristic.lookup(h_table, target_node.id, 0.0)
-          Ok(
-            SearchNode(
-              node_id: target_node.id,
-              time_sec: arrival_time,
-              g_cost: g,
-              f_cost: g +. h,
-              parent: Some(current),
-              edge_taken: Some(edge_obj.id),
-            ),
-          )
+          Ok(SearchNode(
+            node_id: target_node.id,
+            time_sec: arrival_time,
+            g_cost: g,
+            f_cost: g +. h,
+            parent: Some(current),
+            edge_taken: Some(edge_obj.id),
+          ))
         }
         False -> Error(Nil)
       }
@@ -292,8 +279,7 @@ fn generate_successors(
     list.any(constraints, fn(c) {
       case c {
         AvoidNode(nid, t) ->
-          nid == current.node_id
-          && math_ffi.abs_float(t -. wait_until) <=. 0.5
+          nid == current.node_id && math_ffi.abs_float(t -. wait_until) <=. 0.5
         _ -> False
       }
     })

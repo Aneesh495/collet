@@ -1,12 +1,6 @@
-import collet/protocol/vda5050/action.{
-  type InstantActionsMessage,
-}
-import collet/protocol/vda5050/connection.{
-  type ConnectionMessage,
-}
-import collet/protocol/vda5050/order.{
-  type Order, type OrderEdge, type OrderNode,
-}
+import collet/protocol/vda5050/action.{type InstantActionsMessage}
+import collet/protocol/vda5050/connection.{type ConnectionMessage}
+import collet/protocol/vda5050/order.{type Order, type OrderEdge, type OrderNode}
 import gleam/dynamic/decode
 import gleam/json
 import gleam/list
@@ -17,7 +11,9 @@ pub type OrderSummary {
 }
 
 // Parses and validates a VDA 5050 Order JSON document.
-pub fn decode_order_summary(json_string: String) -> Result(OrderSummary, String) {
+pub fn decode_order_summary(
+  json_string: String,
+) -> Result(OrderSummary, String) {
   let decoder = {
     use order_id <- decode.field("orderId", decode.string)
     use update_id <- decode.field("orderUpdateId", decode.int)
@@ -26,7 +22,8 @@ pub fn decode_order_summary(json_string: String) -> Result(OrderSummary, String)
 
   case json.parse(json_string, decoder) {
     Ok(summary) -> Ok(summary)
-    Error(_) -> Error("Malformed VDA 5050 order: missing orderId or orderUpdateId")
+    Error(_) ->
+      Error("Malformed VDA 5050 order: missing orderId or orderUpdateId")
   }
 }
 
@@ -92,7 +89,10 @@ pub fn encode_instant_actions(m: InstantActionsMessage) -> String {
       json.object([
         #("actionType", json.string(a.action_type)),
         #("actionId", json.string(a.action_id)),
-        #("blockingType", json.string(action.blocking_type_to_string(a.blocking_type))),
+        #(
+          "blockingType",
+          json.string(action.blocking_type_to_string(a.blocking_type)),
+        ),
       ])
     })
     |> json.preprocessed_array

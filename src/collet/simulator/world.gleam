@@ -114,21 +114,17 @@ pub fn step(world: SimWorld) -> #(SimWorld, List(SimEvent)) {
 
   // 1. Advance individual robot kinematic physics
   let #(updated_robots, movement_events, step_dist, step_energy) =
-    dict.fold(
-      world.robots,
-      #(dict.new(), [], 0.0, 0.0),
-      fn(acc, vid, robot) {
-        let #(robots_map, events_acc, dist_acc, energy_acc) = acc
-        let #(new_robot, robot_events, d_dist, d_energy) =
-          advance_robot(robot, dt)
-        #(
-          dict.insert(robots_map, vid, new_robot),
-          list.append(events_acc, robot_events),
-          dist_acc +. d_dist,
-          energy_acc +. d_energy,
-        )
-      },
-    )
+    dict.fold(world.robots, #(dict.new(), [], 0.0, 0.0), fn(acc, vid, robot) {
+      let #(robots_map, events_acc, dist_acc, energy_acc) = acc
+      let #(new_robot, robot_events, d_dist, d_energy) =
+        advance_robot(robot, dt)
+      #(
+        dict.insert(robots_map, vid, new_robot),
+        list.append(events_acc, robot_events),
+        dist_acc +. d_dist,
+        energy_acc +. d_energy,
+      )
+    })
 
   // 2. Perform continuous collision detection across all active robot pairs
   let collision_events = check_fleet_collisions(updated_robots)
@@ -229,13 +225,10 @@ fn advance_robot(
           let #(final_traj, events) = case
             next_cursor >=. traj.total_duration_sec
           {
-            True -> #(
-              None,
-              [
-                RobotMoved(robot.vehicle_id, new_pose),
-                RobotReachedGoal(robot.vehicle_id, new_pose),
-              ],
-            )
+            True -> #(None, [
+              RobotMoved(robot.vehicle_id, new_pose),
+              RobotReachedGoal(robot.vehicle_id, new_pose),
+            ])
             False -> #(Some(traj), [RobotMoved(robot.vehicle_id, new_pose)])
           }
 
@@ -298,12 +291,10 @@ fn check_pairs(
           let poly2 = polygon.obb_to_polygon(obb2)
           case polygon.polygons_intersect_sat(poly1, poly2) {
             True ->
-              Ok(
-                CollisionDetected(
-                  first_vehicle: head.vehicle_id,
-                  second_vehicle: other.vehicle_id,
-                ),
-              )
+              Ok(CollisionDetected(
+                first_vehicle: head.vehicle_id,
+                second_vehicle: other.vehicle_id,
+              ))
             False -> Error(Nil)
           }
         })

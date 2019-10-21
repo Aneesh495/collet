@@ -45,12 +45,7 @@ fn plan_agents_sequentially(
 ) -> Result(WhcaResult, String) {
   case remaining_tasks {
     [] ->
-      Ok(
-        WhcaResult(
-          paths: acc_paths,
-          final_reservation_table: current_table,
-        ),
-      )
+      Ok(WhcaResult(paths: acc_paths, final_reservation_table: current_table))
     [task, ..rest] -> {
       // Plan single agent path avoiding all reservations made by higher-priority agents
       case
@@ -74,8 +69,7 @@ fn plan_agents_sequentially(
           // Book path nodes and edges into shared reservation table
           let updated_table =
             book_route_reservations(current_table, task.vehicle_id, path_res)
-          let next_paths =
-            dict.insert(acc_paths, task.vehicle_id, path_res)
+          let next_paths = dict.insert(acc_paths, task.vehicle_id, path_res)
 
           plan_agents_sequentially(
             wmap,

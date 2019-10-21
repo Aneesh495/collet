@@ -35,7 +35,8 @@ pub fn resolve(
 ) -> Result(ResolutionPlan, String) {
   case cycle.cycle_agents {
     [] -> Error("Empty deadlock cycle cannot be resolved")
-    [single] -> Error("Cycle must contain at least 2 distinct agents: " <> single)
+    [single] ->
+      Error("Cycle must contain at least 2 distinct agents: " <> single)
     agents -> {
       // 1. Identify victim agent with the lowest operational priority (lowest integer value)
       let victim_id = select_lowest_priority_agent(agents, priorities)
@@ -48,7 +49,10 @@ pub fn resolve(
       // 2. Locate current position of the victim agent
       case dict.get(current_agent_nodes, victim_id) {
         Error(Nil) ->
-          Error("Cannot locate current topological node for yield agent " <> victim_id)
+          Error(
+            "Cannot locate current topological node for yield agent "
+            <> victim_id,
+          )
         Ok(curr_node_id) -> {
           // 3. Search for adjacent parking buffer or vacant bypass node
           let neighbors = map.get_neighbors(wmap, curr_node_id)
@@ -64,14 +68,13 @@ pub fn resolve(
           case buffer_candidate {
             // Found adjacent buffer: yield into buffer bay
             Ok(#(buf_node, _)) ->
-              Ok(
-                ResolutionPlan(
-                  yield_agent_id: victim_id,
-                  action: YieldToBuffer(buffer_node_id: buf_node.id),
-                  beneficiary_agent_id: beneficiary_id,
-                  reason: "Yielding lower priority vehicle into adjacent buffer bay " <> buf_node.id,
-                ),
-              )
+              Ok(ResolutionPlan(
+                yield_agent_id: victim_id,
+                action: YieldToBuffer(buffer_node_id: buf_node.id),
+                beneficiary_agent_id: beneficiary_id,
+                reason: "Yielding lower priority vehicle into adjacent buffer bay "
+                  <> buf_node.id,
+              ))
             // No buffer: reverse into an available incoming neighbor junction
             Error(Nil) -> {
               let incoming_candidate =
@@ -86,23 +89,20 @@ pub fn resolve(
 
               case incoming_candidate {
                 Ok(#(free_node, _)) ->
-                  Ok(
-                    ResolutionPlan(
-                      yield_agent_id: victim_id,
-                      action: ReverseToJunction(junction_node_id: free_node.id),
-                      beneficiary_agent_id: beneficiary_id,
-                      reason: "Reversing into unreserved neighbor junction " <> free_node.id,
-                    ),
-                  )
+                  Ok(ResolutionPlan(
+                    yield_agent_id: victim_id,
+                    action: ReverseToJunction(junction_node_id: free_node.id),
+                    beneficiary_agent_id: beneficiary_id,
+                    reason: "Reversing into unreserved neighbor junction "
+                      <> free_node.id,
+                  ))
                 Error(Nil) ->
-                  Ok(
-                    ResolutionPlan(
-                      yield_agent_id: victim_id,
-                      action: RerouteDetour(detour_node_id: curr_node_id),
-                      beneficiary_agent_id: beneficiary_id,
-                      reason: "Forcing full dynamic reroute around congested aisle",
-                    ),
-                  )
+                  Ok(ResolutionPlan(
+                    yield_agent_id: victim_id,
+                    action: RerouteDetour(detour_node_id: curr_node_id),
+                    beneficiary_agent_id: beneficiary_id,
+                    reason: "Forcing full dynamic reroute around congested aisle",
+                  ))
               }
             }
           }

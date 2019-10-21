@@ -56,10 +56,8 @@ pub fn swept_intervals_collide(
     True -> False
     False -> {
       // Broad-phase spatial distance check on centers
-      let center_a =
-        point.midpoint(knot_a_start.position, knot_a_end.position)
-      let center_b =
-        point.midpoint(knot_b_start.position, knot_b_end.position)
+      let center_a = point.midpoint(knot_a_start.position, knot_a_end.position)
+      let center_b = point.midpoint(knot_b_start.position, knot_b_end.position)
       let dist = point.distance(center_a, center_b)
 
       let radius_a = { width_a +. length_a } /. 2.0

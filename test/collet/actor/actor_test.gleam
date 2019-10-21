@@ -38,7 +38,11 @@ pub fn robot_session_lifecycle_and_telemetry_test() {
   assert telem2.pose.y == 5.0
 
   // 4. Trigger E-Stop
-  robot_session.trigger_emergency_stop(session_subject, "Obstacle in safety zone", 1000)
+  robot_session.trigger_emergency_stop(
+    session_subject,
+    "Obstacle in safety zone",
+    1000,
+  )
   let telem3 = robot_session.get_telemetry(session_subject, 1000)
   assert telem3.is_e_stopped == True
 

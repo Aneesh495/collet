@@ -197,7 +197,8 @@ pub fn start_transit_to_pickup(
 ) -> Result(MissionTask, String) {
   case task {
     TransportMission(..) -> {
-      let new_st = InTransitToPickup(vehicle_id: vehicle_id, start_time: now_sec)
+      let new_st =
+        InTransitToPickup(vehicle_id: vehicle_id, start_time: now_sec)
       Ok(update_status(task, new_st))
     }
     _ -> Error("Only transport missions feature transit to pickup")
@@ -256,12 +257,7 @@ fn update_status(task: MissionTask, new_status: TaskStatus) -> MissionTask {
         priority: pr,
         status: new_status,
       )
-    RelocateMission(
-      task_id: tid,
-      target_node_id: tgt,
-      priority: pr,
-      status: _,
-    ) ->
+    RelocateMission(task_id: tid, target_node_id: tgt, priority: pr, status: _) ->
       RelocateMission(
         task_id: tid,
         target_node_id: tgt,

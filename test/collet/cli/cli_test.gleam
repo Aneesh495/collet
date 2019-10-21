@@ -39,7 +39,7 @@ pub fn battery_bar_rendering_test() {
   assert string.contains(bar_full, "100%") == True
   assert string.contains(bar_full, "██████████") == True
 
-  let bar_half = dashboard.render_battery_bar(0.50, 10)
+  let bar_half = dashboard.render_battery_bar(0.5, 10)
   assert string.contains(bar_half, "50%") == True
 
   let bar_empty = dashboard.render_battery_bar(0.0, 10)
@@ -75,13 +75,14 @@ pub fn dashboard_rendering_test() {
       total_robots: 2,
       active_missions_count: 1,
       pending_tasks_count: 0,
-      utilization_ratio: 0.50,
+      utilization_ratio: 0.5,
       telemetries: [t1, t2],
     )
 
   let output = dashboard.render_dashboard(snapshot, 14.5)
 
-  assert string.contains(output, "COLLET INDUSTRIAL AMR FLEET ORCHESTRATION") == True
+  assert string.contains(output, "COLLET INDUSTRIAL AMR FLEET ORCHESTRATION")
+    == True
   assert string.contains(output, "amr-01") == True
   assert string.contains(output, "amr-02") == True
   assert string.contains(output, "E-STOPPED") == True

@@ -113,7 +113,7 @@ pub fn nominal_duration(edge: Edge, vehicle_speed_limit: Float) -> Float {
     False -> vehicle_speed_limit
   }
   case effective_speed <. 0.01 {
-    True -> 999999.0
+    True -> 999_999.0
     False -> edge.length_meters /. effective_speed
   }
 }

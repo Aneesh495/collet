@@ -212,15 +212,13 @@ fn find_and_interpolate_knots(
             }
             *. alpha
 
-          Ok(
-            TrajectoryKnot(
-              time_sec: query_time,
-              position: interp_pos,
-              heading_rad: interp_heading,
-              linear_velocity_mps: interp_v,
-              angular_velocity_radps: interp_omega,
-            ),
-          )
+          Ok(TrajectoryKnot(
+            time_sec: query_time,
+            position: interp_pos,
+            heading_rad: interp_heading,
+            linear_velocity_mps: interp_v,
+            angular_velocity_radps: interp_omega,
+          ))
         }
         False -> find_and_interpolate_knots(curr, rest, query_time)
       }

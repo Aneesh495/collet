@@ -122,7 +122,7 @@ pub fn stopping_distance(
     False -> profile.max_linear_deceleration
   }
   case a_decel <. 0.01 {
-    True -> 999999.0
+    True -> 999_999.0
     False -> { v *. v } /. { 2.0 *. a_decel }
   }
 }
@@ -142,7 +142,8 @@ pub fn payload_derated_deceleration(
   profile: VehicleProfile,
   payload_kg: Float,
 ) -> Float {
-  let safe_payload = math_ffi.clamp_float(payload_kg, 0.0, profile.max_payload_kg)
+  let safe_payload =
+    math_ffi.clamp_float(payload_kg, 0.0, profile.max_payload_kg)
   let payload_ratio = safe_payload /. profile.max_payload_kg
   // Derates deceleration down to a minimum of 60% at full payload capacity
   let derate_factor = 1.0 -. 0.4 *. payload_ratio

@@ -146,8 +146,8 @@ pub fn charge(
   let curr_soc = state_of_charge(battery)
 
   // CC-CV charging efficiency taper: above 80% SoC, charging power derates to protect cells
-  let taper_factor = case curr_soc >. 0.80 {
-    True -> { 1.0 -. curr_soc } /. 0.20
+  let taper_factor = case curr_soc >. 0.8 {
+    True -> { 1.0 -. curr_soc } /. 0.2
     False -> 1.0
   }
   let effective_watts = charger_watts *. taper_factor *. 0.92

@@ -63,8 +63,16 @@ pub fn prometheus_metrics_endpoint_test() {
   assert resp.status == 200
   assert string.contains(resp.body, "collet_fleet_total_robots 1") == True
   assert string.contains(resp.body, "collet_fleet_active_missions 1") == True
-  assert string.contains(resp.body, "collet_distance_traveled_meters_total 1540.2") == True
-  assert string.contains(resp.body, "collet_robot_battery_soc{vehicle_id=\"amr-api\"} 0.85") == True
+  assert string.contains(
+      resp.body,
+      "collet_distance_traveled_meters_total 1540.2",
+    )
+    == True
+  assert string.contains(
+      resp.body,
+      "collet_robot_battery_soc{vehicle_id=\"amr-api\"} 0.85",
+    )
+    == True
 }
 
 pub fn fleet_status_and_telemetry_test() {

@@ -28,7 +28,7 @@ pub type Bid {
 }
 
 // Minimum battery state-of-charge required to bid on transport tasks.
-const min_dispatch_soc = 0.20
+const min_dispatch_soc = 0.2
 
 // Computes the marginal cost bid for an individual AMR to service a task.
 pub fn compute_bid(
@@ -84,7 +84,8 @@ pub fn compute_bid(
                       // Marginal Cost = distance_to_pickup + 0.5 * distance_transport
                       //                 + 20.0 * (1.0 - battery_soc)
                       //                 + 15.0 * queued_tasks
-                      let battery_penalty = { 1.0 -. bidder.battery_soc } *. 20.0
+                      let battery_penalty =
+                        { 1.0 -. bidder.battery_soc } *. 20.0
                       let queue_penalty =
                         int.to_float(bidder.queued_task_count) *. 15.0
                       let total_cost =
@@ -96,14 +97,12 @@ pub fn compute_bid(
                       // Assume nominal average speed of 1.5 m/s
                       let eta_sec = dist_to_pickup /. 1.5
 
-                      Ok(
-                        Bid(
-                          vehicle_id: bidder.vehicle_id,
-                          task_id: tid,
-                          marginal_cost: total_cost,
-                          estimated_arrival_sec: eta_sec,
-                        ),
-                      )
+                      Ok(Bid(
+                        vehicle_id: bidder.vehicle_id,
+                        task_id: tid,
+                        marginal_cost: total_cost,
+                        estimated_arrival_sec: eta_sec,
+                      ))
                     }
                     _, _, _ ->
                       Error(
@@ -131,7 +130,9 @@ pub fn run_auction(
 
   case valid_bids {
     [] ->
-      Error("No eligible robots submitted a valid bid for task " <> task.id(task))
+      Error(
+        "No eligible robots submitted a valid bid for task " <> task.id(task),
+      )
     [first, ..rest] -> {
       let winning_bid =
         list.fold(rest, first, fn(best, candidate) {

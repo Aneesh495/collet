@@ -10,15 +10,14 @@ pub fn battery_initialization_and_capacity_test() {
   assert battery.total_energy_wh(bat) == 2400.0
   assert battery.current_energy_wh(bat) == 2400.0
   assert battery.state_of_charge(bat) == 1.0
-  assert battery.is_low(bat, 0.20) == False
+  assert battery.is_low(bat, 0.2) == False
 }
 
 pub fn battery_tractive_power_and_discharge_test() {
   let bat = battery.new_lifepo4_48v_50ah()
 
   // 200 kg robot + 300 kg payload at 1.5 m/s
-  let power =
-    battery.compute_motion_power_watts(bat, 200.0, 300.0, 1.5, 0.0)
+  let power = battery.compute_motion_power_watts(bat, 200.0, 300.0, 1.5, 0.0)
 
   // Power should exceed auxiliary 45W load
   assert power >. 45.0
@@ -49,13 +48,12 @@ pub fn charging_dock_lifecycle_and_queue_test() {
   assert d.status == DockAvailable
 
   // Dock AMR-01
-  let assert Ok(docked) = dock.dock(d, "amr-01", 0.90, 100.0)
-  assert docked.status == DockOccupied("amr-01", 100.0, 0.90)
+  let assert Ok(docked) = dock.dock(d, "amr-01", 0.9, 100.0)
+  assert docked.status == DockOccupied("amr-01", 100.0, 0.9)
 
   // Second AMR cannot dock concurrently
-  assert dock.dock(docked, "amr-02", 0.90, 110.0) == Error(
-    "Dock DOCK_A is currently occupied by vehicle amr-01",
-  )
+  assert dock.dock(docked, "amr-02", 0.9, 110.0)
+    == Error("Dock DOCK_A is currently occupied by vehicle amr-01")
 
   // Enqueue AMR-02
   let enqueued = dock.enqueue(docked, "amr-02")
@@ -68,8 +66,10 @@ pub fn charging_dock_lifecycle_and_queue_test() {
 
 pub fn dock_selection_and_time_estimation_test() {
   let n_robot = node.new_transit("N_ROBOT", Point2D(0.0, 0.0))
-  let n_close = node.new_charger("N_CHG_CLOSE", Point2D(10.0, 0.0), "D1", 22.0, "PAD", 0.0)
-  let n_far = node.new_charger("N_CHG_FAR", Point2D(100.0, 0.0), "D2", 22.0, "PAD", 0.0)
+  let n_close =
+    node.new_charger("N_CHG_CLOSE", Point2D(10.0, 0.0), "D1", 22.0, "PAD", 0.0)
+  let n_far =
+    node.new_charger("N_CHG_FAR", Point2D(100.0, 0.0), "D2", 22.0, "PAD", 0.0)
 
   let wmap =
     map.new("MAP_ENERGY", "Energy Map")
@@ -86,10 +86,10 @@ pub fn dock_selection_and_time_estimation_test() {
   assert best_dock.dock_id == "DOCK_1"
 
   let bat = battery.new_lifepo4_48v_50ah()
-  let low_bat = battery.discharge(bat, 3600.0, 1200.0) // SoC 0.50
+  let low_bat = battery.discharge(bat, 3600.0, 1200.0)
+  // SoC 0.50
 
-  let estimated_time =
-    dock.estimate_charge_time_sec(low_bat, 22.0, 0.90)
+  let estimated_time = dock.estimate_charge_time_sec(low_bat, 22.0, 0.9)
 
   // Charging 40% of 2.4 kWh = 0.96 kWh at ~20 kW net takes ~170-195 seconds
   assert estimated_time >. 150.0

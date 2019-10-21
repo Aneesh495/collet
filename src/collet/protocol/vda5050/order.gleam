@@ -3,12 +3,7 @@ import gleam/option.{type Option, None, Some}
 
 // VDA 5050 spatial position record representing coordinates and orientation.
 pub type NodePosition {
-  NodePosition(
-    x: Float,
-    y: Float,
-    theta: Option(Float),
-    map_id: String,
-  )
+  NodePosition(x: Float, y: Float, theta: Option(Float), map_id: String)
 }
 
 // Control point for rational/non-rational polynomial splines (NURBS/Bezier).

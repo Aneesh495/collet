@@ -79,9 +79,7 @@ fn handle_message(
     }
 
     UpdatePosition(nid, p) -> {
-      actor.continue(
-        SessionState(..state, current_node_id: nid, pose: p),
-      )
+      actor.continue(SessionState(..state, current_node_id: nid, pose: p))
     }
 
     UpdateBattery(bat) -> {
@@ -141,11 +139,7 @@ fn handle_message(
     EmergencyStop(_reason, client) -> {
       process.send(client, Nil)
       actor.continue(
-        SessionState(
-          ..state,
-          is_e_stopped: True,
-          active_order: None,
-        ),
+        SessionState(..state, is_e_stopped: True, active_order: None),
       )
     }
 

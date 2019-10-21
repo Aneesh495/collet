@@ -35,12 +35,7 @@ pub fn compute_aabb(p: Polygon) -> Result(AABB, Nil) {
     [] -> Error(Nil)
     [first, ..rest] -> {
       let init_box =
-        AABB(
-          min_x: first.x,
-          min_y: first.y,
-          max_x: first.x,
-          max_y: first.y,
-        )
+        AABB(min_x: first.x, min_y: first.y, max_x: first.x, max_y: first.y)
       let final_box =
         list.fold(rest, init_box, fn(box, v) {
           AABB(
@@ -238,7 +233,10 @@ fn has_no_separating_axis(
 }
 
 // Projects all vertices of a polygon onto a unit normal axis and finds [min, max] projection.
-fn project_onto_axis(vertices: List(Point2D), axis: Point2D) -> #(Float, Float) {
+fn project_onto_axis(
+  vertices: List(Point2D),
+  axis: Point2D,
+) -> #(Float, Float) {
   case vertices {
     [] -> #(0.0, 0.0)
     [first, ..rest] -> {

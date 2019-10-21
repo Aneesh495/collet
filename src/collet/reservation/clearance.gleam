@@ -35,7 +35,8 @@ pub fn dynamic_clearance_obb(
   heading_rad: Float,
   linear_velocity_mps: Float,
 ) -> OrientedBoundingBox {
-  let #(w_eff, l_eff) = dynamic_clearance_dimensions(profile, linear_velocity_mps)
+  let #(w_eff, l_eff) =
+    dynamic_clearance_dimensions(profile, linear_velocity_mps)
   OrientedBoundingBox(
     center: center,
     width: w_eff,
@@ -57,8 +58,10 @@ pub fn minimum_safe_headway(
   let v_l = math_ffi.max_float(0.0, leader_speed)
 
   let d_reaction = v_f *. reaction_time_seconds
-  let d_f_stop = { v_f *. v_f } /. { 2.0 *. math_ffi.max_float(0.1, follower_decel) }
-  let d_l_stop = { v_l *. v_l } /. { 2.0 *. math_ffi.max_float(0.1, leader_decel) }
+  let d_f_stop =
+    { v_f *. v_f } /. { 2.0 *. math_ffi.max_float(0.1, follower_decel) }
+  let d_l_stop =
+    { v_l *. v_l } /. { 2.0 *. math_ffi.max_float(0.1, leader_decel) }
 
   let raw_gap = d_reaction +. d_f_stop -. d_l_stop +. standstill_gap_meters
   math_ffi.max_float(standstill_gap_meters, raw_gap)

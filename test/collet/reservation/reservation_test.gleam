@@ -74,7 +74,7 @@ pub fn dynamic_clearance_and_headway_test() {
 
   // At 1.8 m/s: length expands due to reaction distance (0.36m) + stopping distance (1.35m)
   let #(_, l_fast) = clearance.dynamic_clearance_dimensions(amr, 1.8)
-  assert l_fast >=. 2.70 && l_fast <=. 2.72
+  assert l_fast >=. 2.7 && l_fast <=. 2.72
 
   // Minimum safe headway
   let gap = clearance.minimum_safe_headway(1.5, 1.2, 0.5, 1.2, 0.5)
@@ -111,7 +111,15 @@ pub fn swept_continuous_collision_test() {
   assert collides
 
   // Conflict classifier also detects the footprint conflict
-  case conflict.detect_trajectory_conflict(traj_a, "AMR_A", traj_b_colliding, "AMR_B", 1.0) {
+  case
+    conflict.detect_trajectory_conflict(
+      traj_a,
+      "AMR_A",
+      traj_b_colliding,
+      "AMR_B",
+      1.0,
+    )
+  {
     Ok(conf) -> {
       let #(a, b) = conflict.conflict_agents(conf)
       assert a == "AMR_A"

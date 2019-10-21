@@ -23,10 +23,7 @@ pub type WaitForGraph {
 
 // Circular dependency cycle representing an active deadlock state.
 pub type DeadlockCycle {
-  DeadlockCycle(
-    cycle_agents: List(VehicleId),
-    longest_wait_sec: Float,
-  )
+  DeadlockCycle(cycle_agents: List(VehicleId), longest_wait_sec: Float)
 }
 
 // Initializes an empty Wait-For Graph.

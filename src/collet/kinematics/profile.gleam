@@ -73,9 +73,16 @@ pub fn plan_trapezoidal(
       // Calculate reachable peak velocity:
       // v_peak^2 = (2 * a_acc * a_dec * d + a_dec * v_start^2 + a_acc * v_end^2) / (a_acc + a_dec)
       let num =
-        2.0 *. safe_a_acc *. safe_a_dec *. safe_dist
-        +. safe_a_dec *. v_start *. v_start
-        +. safe_a_acc *. v_end *. v_end
+        2.0
+        *. safe_a_acc
+        *. safe_a_dec
+        *. safe_dist
+        +. safe_a_dec
+        *. v_start
+        *. v_start
+        +. safe_a_acc
+        *. v_end
+        *. v_end
       let denom = safe_a_acc +. safe_a_dec
       let v_peak_sq = num /. denom
       let v_peak = math_ffi.sqrt(math_ffi.max_float(0.0, v_peak_sq))
@@ -83,7 +90,10 @@ pub fn plan_trapezoidal(
       let t_accel = math_ffi.max_float(0.0, { v_peak -. v_start } /. safe_a_acc)
       let t_decel = math_ffi.max_float(0.0, { v_peak -. v_end } /. safe_a_dec)
       let d_accel =
-        math_ffi.max_float(0.0, { v_peak *. v_peak -. v_start *. v_start } /. { 2.0 *. safe_a_acc })
+        math_ffi.max_float(
+          0.0,
+          { v_peak *. v_peak -. v_start *. v_start } /. { 2.0 *. safe_a_acc },
+        )
       let d_decel = safe_dist -. d_accel
 
       ProfilePhases(
@@ -130,7 +140,8 @@ pub fn sample(
         True -> {
           let s =
             profile.distance_accel_meters
-            +. profile.peak_velocity_mps *. t_after_accel
+            +. profile.peak_velocity_mps
+            *. t_after_accel
           ProfileSample(
             time_sec: t_clamped,
             distance_meters: s,
@@ -149,8 +160,12 @@ pub fn sample(
           let s =
             profile.distance_accel_meters
             +. profile.distance_cruise_meters
-            +. profile.peak_velocity_mps *. t_in_decel
-            -. 0.5 *. a_decel *. t_in_decel *. t_in_decel
+            +. profile.peak_velocity_mps
+            *. t_in_decel
+            -. 0.5
+            *. a_decel
+            *. t_in_decel
+            *. t_in_decel
           ProfileSample(
             time_sec: t_clamped,
             distance_meters: s,

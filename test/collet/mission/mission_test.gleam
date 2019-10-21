@@ -1,7 +1,9 @@
 import collet/geometry/point.{Point2D}
 import collet/mission/auction.{Bidder}
 import collet/mission/dispatcher
-import collet/mission/task.{Assigned, Critical, Express, InTransitToPickup, Standard}
+import collet/mission/task.{
+  Assigned, Critical, Express, InTransitToPickup, Standard,
+}
 import collet/topology/edge
 import collet/topology/map
 import collet/topology/node
@@ -142,15 +144,14 @@ pub fn auction_rejection_criteria_test() {
     Bidder(
       vehicle_id: "amr-light",
       current_node_id: "N_C",
-      battery_soc: 0.90,
+      battery_soc: 0.9,
       is_loaded: False,
       max_payload_kg: 500.0,
       queued_task_count: 0,
     )
 
-  assert auction.compute_bid(weak_robot, heavy_task, wmap) == Error(
-    "Robot amr-light payload limit exceeded for task HEAVY",
-  )
+  assert auction.compute_bid(weak_robot, heavy_task, wmap)
+    == Error("Robot amr-light payload limit exceeded for task HEAVY")
 
   let low_battery_robot =
     Bidder(
@@ -162,9 +163,8 @@ pub fn auction_rejection_criteria_test() {
       queued_task_count: 0,
     )
 
-  assert auction.compute_bid(low_battery_robot, heavy_task, wmap) == Error(
-    "Robot amr-low-bat has insufficient battery reserve (SoC < 0.20)",
-  )
+  assert auction.compute_bid(low_battery_robot, heavy_task, wmap)
+    == Error("Robot amr-low-bat has insufficient battery reserve (SoC < 0.20)")
 }
 
 pub fn dispatcher_batch_allocation_and_utilization_test() {

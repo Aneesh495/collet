@@ -10,10 +10,7 @@ pub type ConnectionState {
 
 // Complete VDA 5050 connection message envelope.
 pub type ConnectionMessage {
-  ConnectionMessage(
-    header: Header,
-    connection_state: ConnectionState,
-  )
+  ConnectionMessage(header: Header, connection_state: ConnectionState)
 }
 
 // Converts ConnectionState to standard VDA 5050 string.

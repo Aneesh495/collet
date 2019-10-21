@@ -11,7 +11,8 @@ import gleam/dict
 import gleam/list
 
 pub fn heuristic_precomputation_test() {
-  let grid = parser.create_grid_warehouse("GRID_3x3", "Heuristic Test", 3, 3, 2.0)
+  let grid =
+    parser.create_grid_warehouse("GRID_3x3", "Heuristic Test", 3, 3, 2.0)
   // Distance from N_0_0 to N_2_2 is 4 edges * (2.0m / 2.0m/s) = 4.0s (using v_max = 2.0)
   let h_table = heuristic.precompute_reverse_dijkstra(grid, "N_2_2", 2.0)
 
@@ -30,19 +31,11 @@ pub fn space_time_astar_test() {
   // 1. Direct unconstrained path from N_0_0 to N_2_0 (2 hops: N_0_0 -> N_1_0 -> N_2_0)
   // At speed 1.8 m/s over 4.0 meters, duration = 4.0 / 1.8 = 2.222s
   case
-    space_time_astar.search(
-      grid,
-      amr,
-      res_tbl,
-      [],
-      "N_0_0",
-      0.0,
-      "N_2_0",
-      50.0,
-    )
+    space_time_astar.search(grid, amr, res_tbl, [], "N_0_0", 0.0, "N_2_0", 50.0)
   {
     Ok(path) -> {
-      assert path.total_travel_time_sec >=. 2.21 && path.total_travel_time_sec <=. 2.23
+      assert path.total_travel_time_sec >=. 2.21
+        && path.total_travel_time_sec <=. 2.23
       assert list.length(path.route) == 3
       Nil
     }
@@ -98,7 +91,7 @@ pub fn space_time_astar_test() {
     )
   {
     Ok(path_detour) -> {
-      assert path_detour.total_travel_time_sec >=. 4.40
+      assert path_detour.total_travel_time_sec >=. 4.4
       let visited_n10 =
         list.any(path_detour.route, fn(r) { r.node_id == "N_1_0" })
       assert !visited_n10
@@ -163,7 +156,8 @@ pub fn whca_fleet_test() {
 }
 
 pub fn corridor_synthesis_test() {
-  let grid = parser.create_grid_warehouse("GRID_3x3", "Corridor Test", 3, 3, 2.0)
+  let grid =
+    parser.create_grid_warehouse("GRID_3x3", "Corridor Test", 3, 3, 2.0)
   let amr = vehicle.standard_differential_amr("AMR_1", "Hermes 1000")
 
   case
@@ -180,7 +174,8 @@ pub fn corridor_synthesis_test() {
   {
     Ok(path) -> {
       let nav_corridor = corridor.synthesize_corridor(path.route, grid, 0.8)
-      assert nav_corridor.total_length_meters >=. 3.99 && nav_corridor.total_length_meters <=. 4.01
+      assert nav_corridor.total_length_meters >=. 3.99
+        && nav_corridor.total_length_meters <=. 4.01
       assert list.length(nav_corridor.segments) == 2
 
       // Position along middle of aisle is within corridor
